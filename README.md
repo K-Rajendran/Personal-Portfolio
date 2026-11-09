@@ -4,7 +4,7 @@ A story-led portfolio for Rajendran K., a backend engineer interested in distrib
 
 ## Technology
 
-Next.js (App Router), React, TypeScript, Framer Motion, Lenis, and CSS custom properties power the experience. The design uses Inter through `next/font/google`, responsive glass surfaces, a persisted light/dark theme, and reduced-motion fallbacks.
+Next.js (App Router), React, TypeScript, Framer Motion, GSAP ScrollTrigger, Lenis, Lucide React, and CSS custom properties power the experience. The design uses Inter through `next/font/google`, responsive glass surfaces, a persisted light/dark theme, synchronized scroll animation, and reduced-motion fallbacks.
 
 ## Local setup
 
@@ -14,6 +14,8 @@ npm run dev
 ```
 
 Open `http://localhost:3000` after the development server is ready.
+
+The portrait animation uses the supplied sequential frame sets in `public/frames`: opening (`0001–0042`), hero (`0043–0102`), hero-to-About transition (`0103–0172`), and About (`0173–0241`). The downloadable résumé is served from `public/Rajendran-Resume.pdf`.
 
 ## Deployment
 

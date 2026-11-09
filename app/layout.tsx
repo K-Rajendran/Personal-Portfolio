@@ -1,9 +1,6 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter } from 'next/font/google';
+import { fontDisplay, fontText } from './fonts';
 import './globals.css';
-
-export const fontDisplay = Inter({ subsets: ['latin'], variable: '--font-display', display: 'swap' });
-export const fontText = Inter({ subsets: ['latin'], variable: '--font-text', display: 'swap' });
 
 export const metadata: Metadata = {
   title: 'Rajendran K. — Backend Engineer',

@@ -2,6 +2,10 @@
 
 import Lenis from 'lenis';
 import { useEffect } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
 
 let lenis: Lenis | null = null;
 let locked = false;
@@ -28,16 +32,17 @@ export function setScrollLocked(lock: boolean) {
 export default function SmoothScroll() {
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    lenis = new Lenis({ duration: 1.15, easing: (t: number) => 1 - Math.pow(1 - t, 4), smoothWheel: true, wheelMultiplier: 1.15, touchMultiplier: 1.4 });
+    lenis = new Lenis({ duration: 0.8, easing: (t: number) => 1 - Math.pow(1 - t, 3), smoothWheel: true, wheelMultiplier: 1, touchMultiplier: 1 });
     if (locked) lenis.stop();
-    let raf = 0;
-    const loop = (t: number) => {
-      lenis?.raf(t);
-      raf = requestAnimationFrame(loop);
-    };
-    raf = requestAnimationFrame(loop);
+    const update = (time: number) => lenis?.raf(time * 1000);
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add(update);
+    gsap.ticker.lagSmoothing(0);
+    const refresh = () => ScrollTrigger.refresh();
+    window.addEventListener('resize', refresh);
     return () => {
-      cancelAnimationFrame(raf);
+      window.removeEventListener('resize', refresh);
+      gsap.ticker.remove(update);
       lenis?.destroy();
       lenis = null;
     };
