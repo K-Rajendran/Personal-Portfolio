@@ -18,14 +18,8 @@ export const CHAPTERS = [
 
 export default function TopNav({ show }: { show: boolean }) {
   const [active, setActive] = useState(0);
-  const [theme, setTheme] = useState<'light' | 'dark'>('dark');
   const bar = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    const saved = window.localStorage.getItem('portfolio-theme') as 'light' | 'dark' | null;
-    const initial = saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-    setTheme(initial);
-    document.documentElement.dataset.theme = initial;
-
     let raf = 0;
     const t = () => {
       const max = document.documentElement.scrollHeight - window.innerHeight;
@@ -43,18 +37,11 @@ export default function TopNav({ show }: { show: boolean }) {
     return () => cancelAnimationFrame(raf);
   }, []);
 
-  const toggleTheme = () => {
-    const next = theme === 'dark' ? 'light' : 'dark';
-    setTheme(next);
-    document.documentElement.dataset.theme = next;
-    window.localStorage.setItem('portfolio-theme', next);
-  };
-
   return (
-    <motion.header className="nav" initial={{ y: -40, opacity: 0 }} animate={{ y: show ? 0 : -40, opacity: show ? 1 : 0 }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}>
+    <motion.header className={`nav${active > 0 ? " nav-scrolled" : ""}`} initial={{ y: -40, opacity: 0 }} animate={{ y: show ? 0 : -40, opacity: show ? 1 : 0 }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}>
       <div className="nav-progress" ref={bar} />
       <button className="nav-mark" onClick={() => scrollToId('billboard')} aria-label="Back to top">
-        <span className="nm-sq">LD</span>
+        <span className="nm-sq">RK</span>
         <span className="nm-txt">
           {PROFILE.realName}
           <small>{PROFILE.role}</small>
@@ -62,7 +49,7 @@ export default function TopNav({ show }: { show: boolean }) {
       </button>
       <nav className="nav-chapters">
         {CHAPTERS.map((c, i) => (
-          <button key={c.id} className={i === active ? 'on' : ''} onClick={() => scrollToId(c.id)}>
+          <button key={c.id} className={i === active ? 'on' : ''} aria-current={i === active ? 'location' : undefined} onClick={() => scrollToId(c.id)}>
             <i>{String(i).padStart(2, '0')}</i>
             <span>{c.label}</span>
           </button>
@@ -71,9 +58,6 @@ export default function TopNav({ show }: { show: boolean }) {
       <a className="nav-cta" href={`mailto:${PROFILE.email}`}>
         <span>Hire me</span>
       </a>
-      <button className="nav-theme" onClick={toggleTheme} aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}>
-        {theme === 'dark' ? '☼' : '◐'}
-      </button>
     </motion.header>
   );
 }

@@ -1,10 +1,10 @@
-# Rajendran K. — Software Engineering Portfolio
+# Rajendran K — Software Engineering Portfolio
 
-A story-led portfolio for Rajendran K., a backend engineer interested in distributed systems, cloud-native infrastructure, performance engineering, and reliable software.
+A story-led portfolio for a backend engineer interested in distributed systems, cloud-native infrastructure, performance engineering, and reliable software.
 
 ## Technology
 
-Next.js (App Router), React, TypeScript, Framer Motion, GSAP ScrollTrigger, Lenis, Lucide React, and CSS custom properties power the experience. The design uses Inter through `next/font/google`, responsive glass surfaces, a persisted light/dark theme, synchronized scroll animation, and reduced-motion fallbacks.
+Next.js (App Router), React, TypeScript, Framer Motion, GSAP ScrollTrigger, Lenis, Lucide React, and CSS custom properties power the experience. The design uses Inter through `next/font/google`, responsive glass surfaces, a light-only palette ( #4077ba, #E9E8F8, #cf6135), synchronized scroll animation, and reduced-motion fallbacks.
 
 ## Local setup
 

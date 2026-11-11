@@ -10,7 +10,7 @@ const aspect = 16 / 9;
 const interpolate = (a: number, b: number, progress: number) => a + (b - a) * progress;
 
 function placementForHero(width: number, height: number, compact: boolean): Placement {
-  if (compact) return { x: width * 0.68, y: height * 0.48, height: height * 0.58 };
+  if (compact) return { x: width * 0.67, y: height * 0.72, height: height * 0.44 };
   return { x: width * 0.73, y: height * 0.56, height: Math.min(height * 0.94, width * 0.56) };
 }
 
@@ -33,6 +33,7 @@ export default function CharacterStage() {
     let dpr = 1;
     let raf = 0;
     let previousKey = '';
+    let previousImage: HTMLImageElement | null = null;
 
     const resize = () => {
       dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -96,11 +97,42 @@ export default function CharacterStage() {
         place = { ...aboutPlace, y: aboutPlace.y - live.aboutExit };
       }
 
-      const key = `${sequence}-${index}-${Math.round(place.x)}-${Math.round(place.y)}`;
-      if (key !== previousKey) {
+      // Opening ends exactly where the approved hero starts. A single canvas
+      // prevents a second image or a positioning jump at the section boundary.
+      const opening = document.getElementById('opening');
+      const hero = document.getElementById('billboard');
+      if (opening && hero) {
+        const openingRect = opening.getBoundingClientRect();
+        const heroTop = hero.getBoundingClientRect().top;
+        const distance = heroTop - openingRect.top;
+        const progress = clamp(-openingRect.top / Math.max(1, distance));
+        opening.style.setProperty('--caption-opacity', String(clamp(1 - progress * 2)));
+        opening.dataset.leaving = String(progress >= 0.5);
+        if (heroTop > 0) {
+          const openingHeight = Math.min(height, width / aspect);
+          const move = progress * progress * (3 - 2 * progress);
+          sequence = 'opening';
+          index = Math.round(progress * (FRAME_COUNTS.opening - 1));
+          place = {
+            x: interpolate(width * 0.5, heroPlace.x, move),
+            y: interpolate(height * 0.5, heroPlace.y, move),
+            height: interpolate(openingHeight, heroPlace.height, move),
+          };
+        }
+      }
+
+      const key = `${sequence}-${index}-${Math.round(place.x)}-${Math.round(place.y)}-${Math.round(place.height)}`;
+      const image = nearest(frames[sequence], index);
+      // Loading can finish while scroll position is unchanged. Redraw when the
+      // available image changes, and retain the last frame during loading gaps.
+      if (image && (key !== previousKey || image !== previousImage)) {
         previousKey = key;
+        previousImage = image;
         context.clearRect(0, 0, width, height);
-        draw(nearest(frames[sequence], index), place);
+        draw(image, place);
+        canvas.dataset.sequence = sequence;
+        canvas.dataset.frame = String(index);
+        canvas.dataset.placement = `${place.x},${place.y},${place.height}`;
       }
 
       canvas.style.visibility = live.aboutExit > height * 0.9 ? 'hidden' : 'visible';

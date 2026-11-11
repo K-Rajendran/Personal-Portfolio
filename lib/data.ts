@@ -1,8 +1,8 @@
 export const PROFILE = {
-  name: 'Rajendran K.',
-  realName: 'Rajendran K.',
+  name: 'Rajendran K',
+  realName: 'Rajendran K',
   first: 'RAJENDRAN',
-  last: 'K.',
+  last: 'K',
   title: 'BACKEND',
   subtitle: 'ENGINEER',
   role: 'Software Engineer',

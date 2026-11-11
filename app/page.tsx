@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import Backdrop from '@/components/stage/Backdrop';
 import CharacterStage from '@/components/stage/CharacterStage';
 import Billboard from '@/components/sections/Billboard';
@@ -14,18 +14,15 @@ import Finale from '@/components/sections/Finale';
 import Intro from '@/components/ui/Intro';
 import TopNav from '@/components/ui/TopNav';
 import Cursor from '@/components/ui/Cursor';
-import SmoothScroll, { setScrollLocked } from '@/components/ui/SmoothScroll';
+import SmoothScroll from '@/components/ui/SmoothScroll';
 import { loadFrames } from '@/lib/frames';
 import { live } from '@/lib/store';
 
 export default function Home() {
-  const [ready, setReady] = useState(false);
-
   useEffect(() => {
     loadFrames();
     window.history.scrollRestoration = 'manual';
-    window.scrollTo(0, 0);
-    setScrollLocked(true);
+    if (!window.location.hash) window.scrollTo(0, 0);
     const move = (e: PointerEvent) => {
       live.mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
       live.mouse.y = (e.clientY / window.innerHeight) * 2 - 1;
@@ -34,20 +31,16 @@ export default function Home() {
     return () => window.removeEventListener('pointermove', move);
   }, []);
 
-  const done = useCallback(() => {
-    setReady(true);
-    setScrollLocked(false);
-  }, []);
-
   return (
     <>
       <SmoothScroll />
       <Backdrop />
-      <CharacterStage />
       <Cursor />
-      <TopNav show={ready} />
+      <TopNav show />
       <main className="content" id="top">
-        <Billboard ready={ready} />
+        <CharacterStage />
+        <Intro />
+        <Billboard ready />
         <Flight />
         <About />
         <div className="solid-zone">
@@ -59,7 +52,6 @@ export default function Home() {
           <Finale />
         </div>
       </main>
-      {!ready && <Intro onDone={done} />}
     </>
   );
 }

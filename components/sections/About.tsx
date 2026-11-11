@@ -74,19 +74,19 @@ export default function About() {
       <div className="about-sticky">
         <div className="about-glow" />
         <div className="about-panel">
-          <div className="ab-kicker" style={step(p, 0.02)}>
+          <div className="ab-kicker">
             <i /> CHAPTER II · ORIGIN
           </div>
-          <h2 className="ab-title" style={step(p, 0.06)}>
+          <h2 className="ab-title">
             From curiosity
             <br />
             <span>to engineering at scale.</span>
           </h2>
-          <p className="ab-ink" style={step(p, 0.12)}>
+          <p className="ab-ink">
             {words.map((w, i) => {
               const lit = seg(inkP * words.length, i - 1, i + 1);
               return (
-                <span key={i} style={{ opacity: 0.16 + lit * 0.84, color: lit > 0.9 && /242|million|AWS|scale\./.test(w) ? 'var(--red)' : undefined }}>
+                <span key={i} style={{ opacity: 0.72 + lit * 0.28, color: lit > 0.9 && /242|million|AWS|scale\./.test(w) ? 'var(--accent-text)' : undefined }}>
                   {w}{' '}
                 </span>
               );

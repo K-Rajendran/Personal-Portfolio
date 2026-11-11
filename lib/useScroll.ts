@@ -9,7 +9,7 @@ import { clamp } from './store';
  * 'view' → 0..1 from element entering bottom to leaving top
  */
 export function useScrollProgress(
-  ref: RefObject<HTMLElement>,
+  ref: RefObject<HTMLElement | null>,
   cb: (p: number, r: DOMRect) => void,
   mode: 'pin' | 'view' = 'pin',
 ) {

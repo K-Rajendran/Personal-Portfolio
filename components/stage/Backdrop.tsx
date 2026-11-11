@@ -5,7 +5,7 @@ import { live } from '@/lib/store';
 
 /**
  * Fixed cinematic backdrop for the whole site: a minimal, slow WebGL smoke / fog
- * in deep reds. Drifts on its own, swirls gently around the cursor, and rises as you scroll.
+ * in the approved blue, lavender and peach palette. Drifts on its own, swirls gently around the cursor, and rises as you scroll.
  */
 const VERT = `#version 300 es
 in vec2 a; void main(){ gl_Position = vec4(a, 0., 1.); }`;
@@ -13,6 +13,7 @@ in vec2 a; void main(){ gl_Position = vec4(a, 0., 1.); }`;
 const FRAG = `#version 300 es
 precision highp float;
 uniform vec2 uRes; uniform float uT; uniform vec2 uM; uniform float uS; uniform float uI;
+uniform vec3 uSurface; uniform vec3 uBlue; uniform vec3 uPeach;
 out vec4 o;
 float h(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
 float n(vec2 p){ vec2 i = floor(p), f = fract(p); f = f*f*(3.-2.*f);
@@ -33,11 +34,11 @@ void main(){
   float edge = smoothstep(.45, 1., abs(uv.x - .5) * 2.);
   float mask = clamp(low * .8 + edge * .45 + md * .25, 0., 1.);
   float d = smoothstep(.38, .95, f) * mask;
-  vec3 deep = vec3(.035, .055, .11);
-  vec3 warm = vec3(.99, .40, .012);
-  vec3 col = mix(deep, warm, smoothstep(.6, 1., f) * .5) * d * uI;
-  // faint warm key light behind the character
-  col += vec3(.99, .74, .85) * .10 * smoothstep(.75, .0, distance(uv, vec2(.6, .45))) * uI;
+  vec3 surface = uSurface;
+  vec3 blue = uBlue;
+  vec3 peach = uPeach;
+  vec3 col = mix(surface, blue, d * uI * .45);
+  col = mix(col, peach, .12 * smoothstep(.75, .0, distance(uv, vec2(.6, .45))) * uI);
   o = vec4(col, 1.);
 }`;
 
@@ -66,6 +67,18 @@ export default function Backdrop() {
     gl.enableVertexAttribArray(loc);
     gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
     const U = (n: string) => gl.getUniformLocation(prog, n);
+    const tokens = getComputedStyle(document.documentElement);
+    for (const [uniform, token] of [
+      ['uSurface', '--lavender-white'],
+      ['uBlue', '--powder-blue'],
+      ['uPeach', '--sunset-peach'],
+    ]) {
+      const hex = tokens.getPropertyValue(token).trim().replace('#', '');
+      gl.uniform3f(U(uniform),
+        parseInt(hex.slice(0, 2), 16) / 255,
+        parseInt(hex.slice(2, 4), 16) / 255,
+        parseInt(hex.slice(4, 6), 16) / 255);
+    }
     const uRes = U('uRes'), uT = U('uT'), uM = U('uM'), uS = U('uS'), uI = U('uI');
 
     const SCALE = 0.33; // render small, CSS upscales: smoke is soft anyway
